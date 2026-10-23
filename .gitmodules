@@ -1,0 +1,6 @@
+[submodule "firmware/third_party/cmsis_core"]
+	path = firmware/third_party/cmsis_core
+	url = https://github.com/STMicroelectronics/cmsis_core.git
+[submodule "firmware/third_party/cmsis_device_g4"]
+	path = firmware/third_party/cmsis_device_g4
+	url = https://github.com/STMicroelectronics/cmsis_device_g4.git

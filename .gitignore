@@ -1,0 +1,19 @@
+# firmware build output
+firmware/build/
+
+# KiCad local state, backups, reports
+*.kicad_prl
+*-backups/
+fp-info-cache
+*.lck
+~*.lck
+hardware/erc.rpt
+hardware/cmp.txt
+
+# Python
+__pycache__/
+*.pyc
+
+# am24.py output
+*.csv
+!hardware/am24_shield_bom.csv
