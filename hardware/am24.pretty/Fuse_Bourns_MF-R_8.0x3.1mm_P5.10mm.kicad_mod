@@ -1,0 +1,128 @@
+(footprint "Fuse_Bourns_MF-R_8.0x3.1mm_P5.10mm"
+	(version 20260206)
+	(generator "pcbnew")
+	(layer "F.Cu")
+	(descr "PTC resettable fuse, Bourns MF-R radial, body up to 8.0 x 3.1 mm (MF-R005 style 4, MF-R010...MF-R050 style 1), lead pitch 5.1 mm, leads on the two disc faces about 1.8 mm apart, lead dia 0.405-0.51 mm, https://www.bourns.com/docs/Product-Datasheets/mfr.pdf")
+	(tags "ptc resettable fuse polyfuse THT MF-R005 MF-R050")
+	(property "Reference" "REF**"
+		(at 2.55 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "Fuse_Bourns_MF-R_8.0x3.1mm_P5.10mm"
+		(at 2.55 3.85 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -1.56 -0.76)
+		(end -0.74 -0.76)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 0.74 -0.76)
+		(end 6.66 -0.76)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 6.66 -0.76)
+		(end 6.66 2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 6.66 2.56)
+		(end 5.84 2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 4.36 2.56)
+		(end -1.56 2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start -1.56 2.56)
+		(end -1.56 -0.76)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_rect
+		(start -1.7 -1.05)
+		(end 6.8 2.85)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+	)
+	(fp_rect
+		(start -1.45 -0.65)
+		(end 6.55 2.45)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 2.55 0.9 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" thru_hole circle
+		(at 0 0)
+		(size 1.6 1.6)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+	)
+	(pad "2" thru_hole circle
+		(at 5.1 1.8)
+		(size 1.6 1.6)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+	)
+	(embedded_fonts no)
+)

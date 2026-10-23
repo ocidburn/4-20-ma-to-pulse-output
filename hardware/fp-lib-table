@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "AM24")(type "KiCad")(uri "${KIPRJMOD}/am24.pretty")(options "")(descr "AM24 project footprints"))
+)

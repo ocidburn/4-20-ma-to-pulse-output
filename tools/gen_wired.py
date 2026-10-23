@@ -21,6 +21,7 @@ SOT23, SOT223 = "Package_TO_SOT_SMD:SOT-23", "Package_TO_SOT_SMD:SOT-223-3_TabPi
 TERM2 = "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal"
 TERM3 = "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
 PH = "Connector_PinHeader_2.54mm:PinHeader_1x{:02d}_P2.54mm_Vertical"
+FUSE_MFR = "AM24:Fuse_Bourns_MF-R_8.0x3.1mm_P5.10mm"   # project library hardware/am24.pretty
 
 R = lib_symbol("Device", "R")
 C = lib_symbol("Device", "C")
@@ -86,7 +87,7 @@ def input_and_adc(s):
     YS, YG = 60.96, 101.6
     s.text("ВХОД 4-20 мА И ЗАЩИТА (изолированная сторона, земля AGND)", 20.32, 30.48)
     s.add("X1", T2, "IN 4-20 mA", TERM2, 25.4, YS, 0, mirror="y", ref_at=(20.32, YS - 3.81, None), val_at=(20.32, YS + 6.35, None))
-    two(s, "F1", PTC, "MF-R005-0 50mA", "", 40.64, YS, H, "MF-R005-0")
+    two(s, "F1", PTC, "MF-R005-0 50mA", FUSE_MFR, 40.64, YS, H, "MF-R005-0")
     s.add("VD1", TVS, "SMBJ33CA", SMB, 50.8, 81.28, 90, mpn="SMBJ33CA-13-F")
     s.add("VT1", NDEP, "DN2540N5-G", "Package_TO_SOT_THT:TO-220-3_Vertical", 63.5, 63.5, 90, mpn="DN2540N5-G",
           ref_at=(60.96, 55.88, None), val_at=(63.5, 53.34, None))
@@ -290,7 +291,7 @@ def main_power(s):
     s.text("ПИТАНИЕ 24 В (общий минус GND)", 20.32, 127.0)
     s.add("X2", T2, "24V DC", TERM2, 25.4, y, 0, mirror="y", ref_at=(20.32, y - 3.81, None), val_at=(20.32, y + 6.35, None))
     s.add("VD5", SS110, "SS110", SMA, 40.64, y, 180, mpn="SS110", ref_at=(40.64, y - 3.81, None), val_at=(40.64, y + 3.81, None))
-    two(s, "F2", PTC, "MF-R050 0.5A", "", 53.34, y, H, "MF-R050")
+    two(s, "F2", PTC, "MF-R050 0.5A", FUSE_MFR, 53.34, y, H, "MF-R050")
     s.add("VD6", DZ, "SMBJ33A", SMB, 64.77, 143.51, 270, mpn="SMBJ33ATR")
     s.add("C30", C, "10u 50V", "Capacitor_SMD:C_1210_3225Metric", 81.28, 143.51, 0)
     s.add("DA3", R78, "R-78HB5.0-0.5", "Converter_DCDC:Converter_DCDC_RECOM_R-78HB-0.5_THT", 104.14, y, 0, mpn="R-78HB5.0-0.5",
