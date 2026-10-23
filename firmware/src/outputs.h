@@ -13,6 +13,8 @@ void     pulse_set_rate(double pulses_per_ms);
 void     pulse_config(uint32_t width_ms, int high_active);
 void     pulse_status(uint64_t *total, uint32_t *owed, int *overflow);
 void     pulse_reset(void);
+double   pulse_exact(void);                  /* pulses generated incl. the fraction not yet whole */
+double   pulse_exact_isr(void);              /* same, for an ISR at the pulse tick priority */
 
 void     alarm_led_init(void);
 void     alarm_led(int on);

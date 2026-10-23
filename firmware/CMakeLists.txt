@@ -8,7 +8,7 @@ set(DEV ${TP}/cmsis_device_g4)
 
 add_executable(am24.elf
     src/main.c src/board.c src/uart.c src/ad7124.c src/outputs.c
-    src/config.c src/app.c src/cli.c
+    src/config.c src/app.c src/cli.c src/gps.c
     ${DEV}/Source/Templates/system_stm32g4xx.c
     ${DEV}/Source/Templates/gcc/startup_stm32g474xx.s
 )

@@ -1,5 +1,5 @@
 /*
- * Frequency output (TIM2, 32-bit, 170 MHz) and pulse output (TIM6 1 kHz tick).
+ * Frequency output (TIM5, 32-bit, 170 MHz) and pulse output (TIM6 1 kHz tick).
  *
  * Frequency: the period in timer ticks is a 32.32 fixed-point number. Every period the update
  * interrupt loads the integer part and carries the fraction in an accumulator, so the average
@@ -8,6 +8,8 @@
  *
  * Pulses: the pulse rate (pulses per ms, 32.32 fixed point) is integrated every 1 ms tick from
  * the same clock; whole pulses go to an "owed" counter that the output drains at the set width.
+ * The exact total (whole + fraction, interpolated inside the current tick) can be read at any
+ * moment, e.g. on a GPS PPS edge, so a test window does not need a million pulses.
  */
 #include "outputs.h"
 #include "board.h"
@@ -36,22 +38,22 @@ static void pout_write(int on)
 
 void outputs_init(void)
 {
-    /* TIM2 CH1 on PA0, PWM mode 1 */
-    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN | RCC_APB1ENR1_TIM6EN;
+    /* TIM5 CH1 on PA0, PWM mode 1 (TIM2 is left free-running for the GPS PPS capture) */
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM5EN | RCC_APB1ENR1_TIM6EN;
     (void)RCC->APB1ENR1;
-    gpio_config(GPIOA, FOUT_PIN, 2, 1);
-    TIM2->CR1 = TIM_CR1_ARPE;
-    TIM2->PSC = 0;
-    TIM2->ARR = TIMER_CLK_HZ / 1000U - 1U;
-    TIM2->CCR1 = 0;
-    TIM2->CCMR1 = (6UL << TIM_CCMR1_OC1M_Pos) | TIM_CCMR1_OC1PE;
-    TIM2->CCER = TIM_CCER_CC1E;
-    TIM2->EGR = TIM_EGR_UG;
-    TIM2->SR = 0;
-    TIM2->DIER = TIM_DIER_UIE;
-    NVIC_SetPriority(TIM2_IRQn, 0);
-    NVIC_EnableIRQ(TIM2_IRQn);
-    TIM2->CR1 |= TIM_CR1_CEN;
+    gpio_config(GPIOA, FOUT_PIN, 2, 2);
+    TIM5->CR1 = TIM_CR1_ARPE;
+    TIM5->PSC = 0;
+    TIM5->ARR = TIMER_CLK_HZ / 1000U - 1U;
+    TIM5->CCR1 = 0;
+    TIM5->CCMR1 = (6UL << TIM_CCMR1_OC1M_Pos) | TIM_CCMR1_OC1PE;
+    TIM5->CCER = TIM_CCER_CC1E;
+    TIM5->EGR = TIM_EGR_UG;
+    TIM5->SR = 0;
+    TIM5->DIER = TIM_DIER_UIE;
+    NVIC_SetPriority(TIM5_IRQn, 0);
+    NVIC_EnableIRQ(TIM5_IRQn);
+    TIM5->CR1 |= TIM_CR1_CEN;
 
     /* Pulse output on PA1 driven from a 1 kHz tick */
     pout_write(0);
@@ -66,21 +68,21 @@ void outputs_init(void)
     TIM6->CR1 = TIM_CR1_CEN;
 }
 
-void TIM2_IRQHandler(void)
+void TIM5_IRQHandler(void)
 {
-    TIM2->SR = ~TIM_SR_UIF;
+    TIM5->SR = ~TIM_SR_UIF;
     uint64_t p = period_q32;
     if (p == 0) {
-        TIM2->ARR = TIMER_CLK_HZ / 1000U - 1U;          /* idle 1 ms periods, output held low */
-        TIM2->CCR1 = 0;
+        TIM5->ARR = TIMER_CLK_HZ / 1000U - 1U;          /* idle 1 ms periods, output held low */
+        TIM5->CCR1 = 0;
         return;
     }
     uint32_t lo = (uint32_t)p;
     uint32_t prev = frac_acc;
     frac_acc = prev + lo;
     uint32_t ticks = (uint32_t)(p >> 32) + (frac_acc < prev ? 1U : 0U);
-    TIM2->ARR = ticks - 1U;
-    TIM2->CCR1 = ticks / 2U;                            /* 50 % duty */
+    TIM5->ARR = ticks - 1U;
+    TIM5->CCR1 = ticks / 2U;                            /* 50 % duty */
     periods_out++;
 }
 
@@ -182,6 +184,27 @@ void pulse_status(uint64_t *total, uint32_t *owed_out, int *ovf)
     *owed_out = owed;
     *ovf = overflow;
     __enable_irq();
+}
+
+double pulse_exact_isr(void)
+{
+    /* call with interrupts masked or from an ISR at the TIM6 priority, so the tick cannot run */
+    uint32_t sr = TIM6->SR;
+    uint32_t us = TIM6->CNT;                            /* 1 MHz: microseconds into the tick */
+    if ((sr & TIM_SR_UIF) || (TIM6->SR & TIM_SR_UIF)) { /* a tick is due but not yet integrated */
+        us = TIM6->CNT + 1000U;
+    }
+    double frac = (double)pulse_acc / 4294967296.0;
+    double rate = (double)rate_q32 / 4294967296.0;      /* pulses per tick */
+    return (double)pulses_total + frac + rate * (double)us / 1000.0;
+}
+
+double pulse_exact(void)
+{
+    __disable_irq();
+    double v = pulse_exact_isr();
+    __enable_irq();
+    return v;
 }
 
 void pulse_reset(void)

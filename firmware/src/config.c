@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define CFG_MAGIC   0x34324D41UL     /* "AM24" */
-#define CFG_VERSION 1UL
+#define CFG_VERSION 2UL
 
 config_t cfg;
 
@@ -30,8 +30,8 @@ void config_defaults(void)
     cfg.fmax_hz = 10000.0f;
     cfg.cutoff_pct = 0.0f;
     cfg.damp_s = 0.0f;
-    cfg.qmax = 100.0f;
-    cfg.pulse_value = 0.01f;
+    cfg.qmax = 100.0;
+    cfg.pulse_value = 0.01;
     cfg.pulse_width_ms = 2;
     cfg.pulse_active_high = 1;
     cfg.alarm_mode = ALARM_ZERO;
@@ -39,8 +39,16 @@ void config_defaults(void)
     cfg.alarm_lo_ma = 3.6f;
     cfg.alarm_hi_ma = 21.0f;
     cfg.tcxo_ppm = 0.0f;
+    cfg.gps_enable = 1;
+    cfg.gps_window_s = 100;
     cfg.vref_v = 3.0f;
     cfg.rshunt_ohm = 50.0f;
+    cfg.ntc_r25_ohm = 10000.0f;
+    cfg.ntc_beta_k = 3380.0f;
+    cfg.ntc_rfix_ohm = 10000.0f;
+    cfg.tc_ppm = 0.0f;
+    cfg.t_window_c = 2.0f;
+    cfg.cal_t0_c = 25.0f;
     cfg.cal_n = 0;
 }
 

@@ -6,11 +6,12 @@
  *   PA6  SPI1_MISO  [D12]  <- ISO7741 <- AD7124 DOUT/RDY
  *   PA7  SPI1_MOSI  [D11]  -> ISO7741 -> AD7124 DIN
  *   PB6  GPIO       [D10]  -> ISO7741 -> AD7124 CS
- *   PA0  TIM2_CH1   [A0]   frequency output (to output stage, channel F)
+ *   PA0  TIM5_CH1   [A0]   frequency output (to output stage, channel F)
  *   PA1  GPIO       [A1]   pulse output (to output stage, channel P)
  *   PA4  GPIO       [A2]   alarm LED (HL2), active high
  *   PA2/PA3 LPUART1        ST-LINK virtual COM port (USB), 115200 8N1
  *   PF0  OSC_IN            10 MHz TCXO in HSE bypass mode (solder bridges on Nucleo!)
+ *   PB10 TIM2_CH3   [D6]   1 PPS from a GPS module (clock correction, pulse-test time base)
  */
 #ifndef BOARD_H
 #define BOARD_H
@@ -29,7 +30,7 @@
 #define CS_PIN           6U
 #define MISO_PORT        GPIOA
 #define MISO_PIN         6U
-#define FOUT_PIN         0U            /* PA0, TIM2_CH1, AF1 */
+#define FOUT_PIN         0U            /* PA0, TIM5_CH1, AF2 */
 #define POUT_PIN         1U            /* PA1 */
 #define ALARM_PIN        4U            /* PA4 */
 

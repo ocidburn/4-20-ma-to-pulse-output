@@ -29,6 +29,7 @@ DZ = lib_symbol("Device", "D_Zener")
 TVS = lib_symbol("Device", "D_TVS")
 LED = lib_symbol("Device", "LED")
 PTC = lib_symbol("Device", "Polyfuse")
+NTC = lib_symbol("Device", "Thermistor_NTC")
 FB = lib_symbol("Device", "FerriteBead")
 BAV = lib_symbol("Device", "D_Dual_Series_AKC")
 NPN = lib_symbol("Transistor_BJT", "BC847")
@@ -42,7 +43,7 @@ T2 = lib_symbol("Connector", "Screw_Terminal_01x02")
 T3 = lib_symbol("Connector", "Screw_Terminal_01x03")
 NDEP = renumber(lib_symbol("Device", "Q_NMOS_Depletion"), {"G": "1", "D": "2", "S": "3"}, "Q_NMOS_Depletion_GDS")
 NMOS = renumber(lib_symbol("Device", "Q_NMOS"), {"G": "1", "D": "2", "S": "3"}, "Q_NMOS_GDS")
-CONN = {n: lib_symbol("Connector_Generic", f"Conn_01x{n:02d}") for n in (2, 6, 8, 10)}
+CONN = {n: lib_symbol("Connector_Generic", f"Conn_01x{n:02d}") for n in (2, 4, 6, 8, 10)}
 
 ADC = box_symbol("AD7124-4BRUZ", "DD",
                  [("8", "AIN0"), ("9", "AIN1"), ("10", "AIN2"), ("11", "AIN3"), ("14", "AIN4"), ("15", "AIN5"),
@@ -135,8 +136,10 @@ def input_and_adc(s):
     # ADC (block shifted right)
     s.dx = 12.7
     s.text("АЦП AD7124-4 И ИОН", 147.32, 20.32)
-    for p in ("10", "11", "14", "15", "16", "17", "18", "21", "3"):
+    for p in ("10", "11", "14", "15", "17", "18", "21", "3"):
         s.nc(f"DD1.{p}")
+    x, y = s.P("DD1.16")
+    s.label("NTC", (x - s.dx, y), 180)                      # AIN6: NTC divider below
     s.w("DD1.13", (142.24, 73.66))
     s.pwr("AGND", 142.24, 73.66)
     s.w("DD1.22", (177.8, 45.72))
@@ -179,6 +182,21 @@ def input_and_adc(s):
         s.hv(f"DA1.{p}", (179.07, s.P(f"DA1.{p}")[1]))
     s.w((179.07, 91.44), (179.07, 101.6))
     s.pwr("AGND", 179.07, 101.6)
+
+    # NTC for the firmware temperature correction: ratiometric divider from VREF, read on AIN6
+    s.add("R9", R, "10k 0.1%", R0805, 127.0, 87.63, 0, mpn="ERA-6AEB103V",
+          ref_at=(124.46, 86.36, "right"), val_at=(124.46, 88.9, "right"))
+    s.add("RK1", NTC, "10k B3380", "Resistor_SMD:R_0603_1608Metric", 127.0, 99.06, 0, mpn="NCU18XH103F60RB",
+          ref_at=(130.81, 97.79, "left"), val_at=(130.81, 100.33, "left"))
+    s.add("C33", C, "100n", C0805, 119.38, 99.06, 0, ref_at=(116.84, 97.79, "right"), val_at=(116.84, 100.33, "right"))
+    s.w("C16.1", (127.0, 78.74), "R9.1")
+    s.w("R9.2", "RK1.1")
+    s.w((127.0, 93.98), (119.38, 93.98), "C33.1")
+    s.w((119.38, 93.98), (114.3, 93.98))
+    s.label("NTC", (114.3, 93.98), 180)
+    s.pwr("AGND", *s.P("RK1.2"), raw=True)
+    s.pwr("AGND", *s.P("C33.2"), raw=True)
+    s.text("RK1 вплотную к DA1 и R2, всё под крышкой", 109.22, 110.49, 1.27)
     s.dx = 0
 
 
@@ -345,10 +363,24 @@ def tcxo_alarm_headers(s):
         s.label(net, (x - 5.08 - s.dx, y), 180)
     for p in ("4", "5", "6"):
         s.nc(f"XS2.{p}")
-    s.text("A0=PA0 FOUT, A1=PA1 POUT, A2=PA4 ALARM", 269.24, 160.02, 1.27)
+    s.text("A0=PA0 FOUT, A1=PA1 POUT, A2=PA4 ALARM", 269.24, 180.34, 1.27)
     s.add("XS4", CONN[8], "Arduino D0-D7", PH.format(8), 292.1, 142.24, 0, ref_at=(289.56, 132.08, None), val_at=(294.64, 154.94, None))
     for p in range(1, 9):
-        s.nc(f"XS4.{p}")
+        if p != 7:
+            s.nc(f"XS4.{p}")
+    # GPS module with 1 PPS output -> D6 (PB10, TIM2_CH3)
+    s.add("J7", CONN[4], "GPS PPS", PH.format(4), 320.04, 144.78, 0, ref_at=(320.04, 137.16, None),
+          val_at=(323.85, 144.78, "left"))
+    s.add("R10", R, "100R", R0805, 314.96, 156.21, 0, ref_at=(317.5, 154.94, "left"), val_at=(317.5, 157.48, "left"))
+    s.w("XS4.7", (284.48, 149.86), (284.48, 160.02), "R10.2")
+    s.w("R10.1", "J7.4")
+    s.w("J7.1", (309.88, 142.24))
+    s.pwr("+5V", 309.88, 142.24, rot=90)
+    s.w("J7.2", (309.88, 144.78))
+    s.pwr("+3V3", 309.88, 144.78, rot=90)
+    s.w("J7.3", (309.88, 147.32))
+    s.pwr("GND", 309.88, 147.32, rot=270)
+    s.text("J7: модуль GPS с выходом PPS. 1 +5V, 2 +3V3, 3 GND, 4 PPS -> D6 (PB10)", 269.24, 165.1, 1.27)
     s.dx = 0
 
 
