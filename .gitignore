@@ -17,3 +17,9 @@ __pycache__/
 # am24.py output
 *.csv
 !hardware/am24_shield_bom.csv
+
+# PCB generation by-products
+*_freerouting.log
+*.dsn
+*.ses
+*-backups/

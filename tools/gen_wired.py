@@ -21,6 +21,7 @@ SOT23, SOT223 = "Package_TO_SOT_SMD:SOT-23", "Package_TO_SOT_SMD:SOT-223-3_TabPi
 TERM2 = "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal"
 TERM3 = "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
 PH = "Connector_PinHeader_2.54mm:PinHeader_1x{:02d}_P2.54mm_Vertical"
+PH_SMD2 = "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical_SMD_Pin1Left"   # no leads into the Nucleo below
 FUSE_MFR = "AM24:Fuse_Bourns_MF-R_8.0x3.1mm_P5.10mm"   # project library hardware/am24.pretty
 
 R = lib_symbol("Device", "R")
@@ -299,7 +300,7 @@ def main_power(s):
     s.add("C31", C, "10u", C1206, 116.84, 143.51, 0)
     s.add("R7", R, "1k", R0805, 129.54, 143.51, 0)
     s.add("HL1", LED, "LED green", "LED_SMD:LED_0805_2012Metric", 129.54, 151.13, 90)
-    s.add("J5", CONN[2], "+5V -> E5V (CN7-6)", PH.format(2), 152.4, y, 0, ref_at=(149.86, y - 3.81, None), val_at=(156.21, y + 1.27, "left"))
+    s.add("J5", CONN[2], "+5V -> E5V (CN7-6)", PH_SMD2, 152.4, y, 0, ref_at=(149.86, y - 3.81, None), val_at=(156.21, y + 1.27, "left"))
     s.w("X2.1", "VD5.2")
     s.w("VD5.1", "F2.1")
     s.w("F2.2", "DA3.1")
@@ -334,7 +335,7 @@ def tcxo_alarm_headers(s):
     s.w((157.48, 134.62), "C32.1")
     s.pwr("GND", *s.P("C32.2"), raw=True)
     s.pwr("GND", *s.P("G1.2"), raw=True)
-    s.add("J6", CONN[2], "TCXO -> OSC_IN (PF0)", PH.format(2), 185.42, 144.78, 0, ref_at=(182.88, 140.97, None), val_at=(190.5, 151.13, None))
+    s.add("J6", CONN[2], "TCXO -> OSC_IN (PF0)", PH_SMD2, 185.42, 144.78, 0, ref_at=(182.88, 140.97, None), val_at=(190.5, 151.13, None))
     s.w("G1.3", "J6.1")
     s.w("J6.2", (177.8, 147.32), (177.8, 152.4))
     s.pwr("GND", 177.8, 152.4)

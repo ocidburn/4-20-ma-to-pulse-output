@@ -17,8 +17,8 @@ F2;1;MF-R050 0.5A;MF-R050;AM24:Fuse_Bourns_MF-R_8.0x3.1mm_P5.10mm
 G1;1;ASTX-H11-10.000MHZ-T;ASTX-H11-10.000MHZ-T;Oscillator:Oscillator_SMD_Abracon_ASE-4Pin_3.2x2.5mm
 HL1;1;LED green;;LED_SMD:LED_0805_2012Metric
 HL2;1;LED red;;LED_SMD:LED_0805_2012Metric
-J5;1;+5V -> E5V (CN7-6);;Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical
-J6;1;TCXO -> OSC_IN (PF0);;Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical
+J5;1;+5V -> E5V (CN7-6);;Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical_SMD_Pin1Left
+J6;1;TCXO -> OSC_IN (PF0);;Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical_SMD_Pin1Left
 J7;1;GPS PPS: +5V, +3V3, GND, PPS;;Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical
 L1;1;BLM18KG601SN1D;BLM18KG601SN1D;Inductor_SMD:L_0603_1608Metric
 R1;1;22R (select 15-33R);;Resistor_SMD:R_0805_2012Metric
